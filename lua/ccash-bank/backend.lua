@@ -99,6 +99,8 @@ local function backend()
                     if detail.name == commodity then
                         success = true
                         depositAmount = depositAmount + count
+                    else
+                        turtle.drop()
                     end
                 end
             end
