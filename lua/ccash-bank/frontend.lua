@@ -5,14 +5,26 @@ local commodity = "Coal"
 
 -- Frontend Routine
 os.pullEvent = os.pullEventRaw
-local version = 0.11
+local version = 0.15
 local function frontend()
 
     -- Networking
-    local modem = peripheral.wrap("back") -- WIRED MODEM THAT SHOULD ONLY CONNECT TO FRONTEND
-    local port = 8192 -- COMMUNCATION PORT, THIS DOESN'T MATTER MUCH BUT MUST MATCH FRONTEND
+    local modem = peripheral.wrap("back") -- WIRED MODEM THAT SHOULD ONLY CONNECT TO BACKEND
+    local port = 8192 -- COMMUNCATION PORT, THIS DOESN'T MATTER MUCH BUT MUST MATCH BACKEND
 
     modem.open(port)
+
+    local function fixedTostring(number) -- simple tostring function that rounds off floating point errors
+        local str = tostring(number)
+        if string.find(str,".") then
+            for i=1,#str do
+                if string.sub(str,#str,#str) == "0" then
+                    str = string.sub(str,1,#str-1)
+                end
+            end
+        end
+        return str
+    end
 
     local function recv(timeout)
         local timeoutTimer = false
@@ -68,7 +80,7 @@ local function frontend()
     end
     function internal.depositCheck()
         send("[DEPOSIT-CHECK]")
-        local cmd = recv(1)
+        local cmd = recv(10)
         return cmd
     end
     function internal.depositAmount()
@@ -169,7 +181,7 @@ local function frontend()
         drawHeader()
         term.setTextColor(colors.gray)
         term.setCursorPos(2,h-1)
-        write("v"..tostring(version).."."..tostring(serverVersion))
+        write("v"..fixedTostring(version).."."..fixedTostring(serverVersion))
 
         -- Draw
         term.setBackgroundColor(colors.brown)
@@ -185,7 +197,7 @@ local function frontend()
         term.setTextColor(colors.gray)
         center("Reserve",10)
         term.setTextColor(colors.brown)
-        center(tostring(math.floor(reserveBalance/1000)).."K "..tostring(math.floor((reserveBalance/reserveMaximum)*1000)/10).."%",11)
+        center(fixedTostring(math.floor(reserveBalance/1000)).."K "..fixedTostring(math.floor((reserveBalance/reserveMaximum)*1000)/10).."%",11)
 
         -- Events
         local e,c,x,y = os.pullEvent("mouse_click")
