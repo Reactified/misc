@@ -2,6 +2,7 @@
 local cname = "CCash"
 local ticker = "CSH"
 local commodity = "Coal"
+local showReserve = true
 
 -- Frontend Routine
 os.pullEvent = os.pullEventRaw
@@ -194,10 +195,12 @@ local function frontend()
         term.setTextColor(colors.brown)
         center("1 "..commodity.." = "..tostring(exchangeRate).." "..ticker,8)
 
-        term.setTextColor(colors.gray)
-        center("Reserve",10)
-        term.setTextColor(colors.brown)
-        center(fixedTostring(math.floor(reserveBalance/1000)).."K "..fixedTostring(math.floor((reserveBalance/reserveMaximum)*1000)/10).."%",11)
+        if showReserve then
+            term.setTextColor(colors.gray)
+            center("Reserve",10)
+            term.setTextColor(colors.brown)
+            center(fixedTostring(math.floor(reserveBalance/1000)).."K "..fixedTostring(math.floor((reserveBalance/reserveMaximum)*1000)/10).."%",11)
+        end
 
         -- Events
         local e,c,x,y = os.pullEvent("mouse_click")
